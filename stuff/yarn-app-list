@@ -1,0 +1,3 @@
+#!/bin/sh
+. /usr/local/hadoops/env-hadoop
+/usr/local/hadoops/hadoop/bin/yarn application -list -appStates ALL

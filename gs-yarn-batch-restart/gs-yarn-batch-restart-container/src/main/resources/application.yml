@@ -1,0 +1,10 @@
+spring:
+    batch:
+        job:
+            enabled: false
+    hadoop:
+        fsUri: hdfs://localhost:8020
+        resourceManagerHost: localhost
+    yarn:
+        batch:
+            enabled: true

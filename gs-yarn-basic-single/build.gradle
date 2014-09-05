@@ -1,0 +1,43 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.0.M1")
+    }
+}
+
+apply plugin: 'base'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+version =  '0.1.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url "http://repo.spring.io/libs-release" }
+    maven { url "http://repo.spring.io/libs-milestone" }
+}
+
+dependencies {
+    compile("org.springframework.data:spring-yarn-boot:2.1.0.BUILD-SNAPSHOT")
+    testCompile("org.springframework.data:spring-yarn-boot-test:2.1.0.BUILD-SNAPSHOT")
+    testCompile("org.hamcrest:hamcrest-core:1.2.1")
+    testCompile("org.hamcrest:hamcrest-library:1.2.1")
+}
+
+task copyJars(type: Copy) {
+    from "$buildDir/libs"
+    into "$rootDir/target/"
+    include "**/*.jar"
+}
+
+assemble.doLast {copyJars.execute()}
+clean.doLast {ant.delete(dir: "target")}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}

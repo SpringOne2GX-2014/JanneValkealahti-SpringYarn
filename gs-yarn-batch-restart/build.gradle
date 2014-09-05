@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.0.M1")
+    }
+}
+
+allprojects {
+    apply plugin: 'base'
+}
+
+subprojects { subproject ->
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    version =  '0.1.0'
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        compile("org.springframework.data:spring-yarn-boot:2.1.0.BUILD-SNAPSHOT")
+    }
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/gs-yarn-batch-restart-dist/target/gs-yarn-batch-restart-dist/"
+        include "**/*.jar"
+    }
+    configurations {
+        compile.exclude group: "org.slf4j", module: "slf4j-log4j12"
+        runtime.exclude group: "org.slf4j", module: "slf4j-log4j12"
+    }
+    assemble.doLast {copyJars.execute()}
+}
+
+project('gs-yarn-batch-restart-client') {
+    apply plugin: 'spring-boot'
+}
+
+project('gs-yarn-batch-restart-appmaster') {
+    apply plugin: 'spring-boot'
+    dependencies {
+        compile("org.springframework.data:spring-yarn-batch:2.1.0.BUILD-SNAPSHOT")
+        runtime("org.springframework.boot:spring-boot-starter-batch:1.2.0.M1")
+        runtime("org.hsqldb:hsqldb:2.3.1")
+        runtime("commons-dbcp:commons-dbcp:1.2.2")
+        runtime("commons-pool:commons-pool:1.3")
+    }
+}
+
+project('gs-yarn-batch-restart-container') {
+    apply plugin: 'spring-boot'
+    dependencies {
+        compile("org.springframework.data:spring-yarn-batch:2.1.0.BUILD-SNAPSHOT")
+        runtime("org.springframework.boot:spring-boot-starter-batch:1.2.0.M1")
+    }
+}
+
+project('gs-yarn-batch-restart-dist') {
+    dependencies {
+        compile project(":gs-yarn-batch-restart-client")
+        compile project(":gs-yarn-batch-restart-appmaster")
+        compile project(":gs-yarn-batch-restart-container")
+        testCompile("org.hsqldb:hsqldb:2.3.1")
+        testCompile("org.springframework.data:spring-yarn-boot-test:2.1.0.BUILD-SNAPSHOT")
+        testCompile("org.hamcrest:hamcrest-core:1.2.1")
+        testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    }
+    test.dependsOn(':gs-yarn-batch-restart-client:assemble')
+    test.dependsOn(':gs-yarn-batch-restart-appmaster:assemble')
+    test.dependsOn(':gs-yarn-batch-restart-container:assemble')
+    clean.doLast {ant.delete(dir: "target")}
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}

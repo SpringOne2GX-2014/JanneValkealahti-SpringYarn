@@ -1,0 +1,2 @@
+#!/bin/sh
+java -jar hsqldb-2.3.1/hsqldb/lib/sqltool.jar --inlineRc=url=jdbc:hsqldb:hsql://localhost:9001/testdb --sql='select STEP_EXECUTION_ID,STEP_NAME,STATUS,EXIT_CODE from BATCH_STEP_EXECUTION;'

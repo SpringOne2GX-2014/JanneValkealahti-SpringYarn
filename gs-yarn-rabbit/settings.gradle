@@ -1,0 +1,3 @@
+rootProject.name = 'gs-yarn-rabbit'
+
+include 'client','appmaster','cont-consumer','cont-producer'

@@ -1,0 +1,81 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Demo Home</title>
+
+    <style>
+	    #charts {
+		    clear: both;
+		    margin-bottom: 50px;
+	    }
+	    .chart-area {
+            float: left;
+            width:  650px;
+            height: 350px;
+            margin-left: 100px;
+	    }
+	    .chart {
+            width:  650px;
+            height: 350px;
+        }
+</style>
+
+    <script src="/dojo/dojo.js" data-dojo-config="isDebug: false, parseOnLoad: true"></script>
+
+    <script th:inline="javascript">
+        dojo.require("dojo.parser");
+        dojo.require("dojox.charting.Chart");
+        dojo.require("dojox.charting.StoreSeries");
+        dojo.require("dojox.charting.themes.Julie");
+        dojo.require("dojox.charting.axis2d.Default");
+        dojo.require("dojox.charting.plot2d.Lines");
+        dojo.require("dojo.store.Memory");
+        dojo.require("dojo.store.JsonRest");
+        dojo.require("dojo.store.Observable");
+        dojo.require('dojox.timing');
+        dojo.require('dojo.date.locale');
+        dojo.require('dojo.number');
+
+        var target = '/demo/data?queue=' + /*[[${queue}]]*/ + 'demo';
+        store = dojo.store.Observable(new dojo.store.JsonRest({target:target}));
+        var chartL;
+        var series = new dojox.charting.StoreSeries(store, {query: {}}, {x:"timestamp", y:"sample"} );
+
+        makeCharts = function(){
+            chartL = new dojox.charting.Chart("lines").
+                    setTheme(dojox.charting.themes.Julie).
+                    addAxis("x", {font: "normal normal bold 22pt Tahoma", natural: false, majorTickStep: 120000,
+                	labelFunc: function(value){
+                		return dojo.date.locale.format(new Date(dojo.number.parse(value)), {timePattern: "HH:mm", selector: "time"})
+                	}
+                	}).
+                addAxis("y", {font: "normal normal bold 22pt Tahoma", vertical: true, fixLower: "minor", fixUpper: "minor", includeZero: true, minorTickStep: 100, majorTickStep: 1000}).
+                addPlot("default", {type: dojox.charting.plot2d.Lines}).
+                addSeries("Size", series, {stroke:{width:6}}).
+                render();
+        };
+
+        t = new dojox.timing.Timer(5000);
+        t.onTick = function(){
+    	     series.fetch();
+        }
+
+        dojo.addOnLoad(function(){
+            makeCharts();
+            t.start();
+        });
+
+    </script>
+
+</head>
+
+<body>
+    <h1 th:text="'Queue ' + ${queue}" />
+	<div id="charts">
+		<div class="chart-area">
+			<div id="lines" class="chart"></div>
+		</div>
+	</div>
+</body>
+</html>

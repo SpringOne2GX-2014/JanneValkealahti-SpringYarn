@@ -1,0 +1,2 @@
+rootProject.name = 'gs-yarn-basic'
+include 'gs-yarn-basic-client','gs-yarn-basic-appmaster','gs-yarn-basic-container','gs-yarn-basic-dist'

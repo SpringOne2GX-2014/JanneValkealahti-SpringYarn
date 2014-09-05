@@ -1,0 +1,67 @@
+buildscript {
+    repositories {
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.0.M1")
+    }
+}
+
+allprojects {
+    apply plugin: 'base'
+}
+
+subprojects { subproject ->
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+    version =  '0.1.0'
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "http://repo.spring.io/libs-release" }
+        maven { url "http://repo.spring.io/libs-milestone" }
+    }
+    dependencies {
+        compile("org.springframework.data:spring-yarn-boot:2.1.0.BUILD-SNAPSHOT")
+    }
+    task copyJars(type: Copy) {
+        from "$buildDir/libs"
+        into "$rootDir/gs-yarn-basic-dist/target/gs-yarn-basic-dist/"
+        include "**/*.jar"
+    }
+    assemble.doLast {copyJars.execute()}
+}
+
+project('gs-yarn-basic-client') {
+    apply plugin: 'spring-boot'
+}
+
+project('gs-yarn-basic-appmaster') {
+    apply plugin: 'spring-boot'
+}
+
+project('gs-yarn-basic-container') {
+    apply plugin: 'spring-boot'
+}
+
+project('gs-yarn-basic-dist') {
+    dependencies {
+        compile project(":gs-yarn-basic-client")
+        compile project(":gs-yarn-basic-appmaster")
+        compile project(":gs-yarn-basic-container")
+        testCompile("org.springframework.data:spring-yarn-boot-test:2.1.0.BUILD-SNAPSHOT")
+        testCompile("org.hamcrest:hamcrest-core:1.2.1")
+        testCompile("org.hamcrest:hamcrest-library:1.2.1")
+    }
+    test.dependsOn(':gs-yarn-basic-client:assemble')
+    test.dependsOn(':gs-yarn-basic-appmaster:assemble')
+    test.dependsOn(':gs-yarn-basic-container:assemble')
+    clean.doLast {ant.delete(dir: "target")}
+    jar.enabled = false
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.11'
+}

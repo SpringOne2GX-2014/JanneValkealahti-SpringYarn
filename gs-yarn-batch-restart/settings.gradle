@@ -1,0 +1,2 @@
+rootProject.name = 'gs-yarn-batch-restart'
+include 'gs-yarn-batch-restart-client','gs-yarn-batch-restart-appmaster','gs-yarn-batch-restart-container','gs-yarn-batch-restart-dist'

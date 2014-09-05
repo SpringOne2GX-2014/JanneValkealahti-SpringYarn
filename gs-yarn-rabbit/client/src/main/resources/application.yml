@@ -1,0 +1,21 @@
+spring:
+    main:
+        show_banner: false
+    hadoop:
+        fsUri: hdfs://node1:8020
+        resourceManagerHost: node1
+    yarn:
+        appType: BOOT
+        appName: gs-yarn-rabbit
+        applicationBaseDir: /app/
+        applicationDir: /app/gs-yarn-rabbit/
+        client:
+            clientClass: org.springframework.yarn.client.DefaultApplicationYarnClient
+            files:
+              - "file:build/libs/gs-yarn-rabbit-appmaster-0.1.0.jar"
+              - "file:build/libs/gs-yarn-rabbit-cont-producer-0.1.0.jar"
+              - "file:build/libs/gs-yarn-rabbit-cont-consumer-0.1.0.jar"
+            resource:
+                memory: 512
+            launchcontext:
+                archiveFile: gs-yarn-rabbit-appmaster-0.1.0.jar

@@ -1,0 +1,2 @@
+#!/bin/sh
+find /usr/local/hadoops/hadoop/logs/userlogs/ | grep stdout

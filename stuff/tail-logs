@@ -1,0 +1,2 @@
+#!/bin/sh
+multitail -q 2 "/usr/local/hadoops/hadoop/logs/userlogs/*/*/*stdout"

@@ -1,0 +1,14 @@
+spring:
+    rabbitmq:
+        addresses: node1:5672
+        username: guest
+        password: guest
+        virtual_host: /
+    hadoop:
+        fsUri: hdfs://node1:8020
+        resourceManagerHost: node1
+    yarn:
+        appType: GS
+        appName: gs-yarn-rabbit
+        applicationBaseDir: /app/
+        applicationDir: /app/gs-yarn-rabbit/

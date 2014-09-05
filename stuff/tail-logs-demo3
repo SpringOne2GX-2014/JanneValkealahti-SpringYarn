@@ -1,0 +1,2 @@
+#!/bin/sh
+multitail -q 2 "../gs-yarn-basic/gs-yarn-basic-dist/target/*/*/*/*/*stdout"
