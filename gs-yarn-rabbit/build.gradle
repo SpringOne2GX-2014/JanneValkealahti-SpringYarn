@@ -7,19 +7,14 @@ buildscript {
     }
 }
 
-configure(rootProject) {
-    task clean {
-        doLast {
-            ant.delete(dir: "build")
-        }
-    }
+allprojects {
+    apply plugin: 'base'
 }
 
 subprojects { subproject ->
     apply plugin: 'java'
     apply plugin: 'eclipse'
     apply plugin: 'idea'
-    apply plugin: 'spring-boot'
     version =  '0.1.0'
 
     sourceCompatibility = 1.6
@@ -34,32 +29,24 @@ subprojects { subproject ->
         compile("org.springframework.data:spring-yarn-boot:2.1.0.M1")
     }
 
-    jar {
-        baseName = 'gs-yarn-rabbit'
-    }
-
     task copyJars(type: Copy) {
         from "$buildDir/libs"
-        into "$rootDir/build/libs"
+        into "$rootDir/gs-yarn-rabbit-dist/target/gs-yarn-rabbit-dist/"
         include "**/*.jar"
     }
-    build.doLast {
-        copyJars.execute()
-    }
-
+    assemble.doLast {copyJars.execute()}
 }
 
-project('client') {
+project('gs-yarn-rabbit-client') {
+    apply plugin: 'spring-boot'
     eclipse.project.name = 'gs-yarn-rabbit-client'
     dependencies {
         compile("org.springframework.data:spring-yarn-boot-cli:2.1.0.M1")
     }
-    jar {
-        appendix = 'client'
-    }
 }
 
-project('appmaster') {
+project('gs-yarn-rabbit-appmaster') {
+    apply plugin: 'spring-boot'
     eclipse.project.name = 'gs-yarn-rabbit-appmaster'
     configurations.all {
         exclude group: 'javax.servlet', module: 'servlet-api', version: '2.5'
@@ -85,33 +72,30 @@ project('appmaster') {
         testCompile "org.hamcrest:hamcrest-library:1.3"
         testCompile "junit:junit:4.11"
     }
-    jar {
-        appendix = 'appmaster'
-    }
 }
 
-project('cont-producer') {
+project('gs-yarn-rabbit-cont-producer') {
+    apply plugin: 'spring-boot'
     eclipse.project.name = 'gs-yarn-rabbit-cont-producer'
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-amqp") {
             exclude group:'ch.qos.logback'
         }
     }
-    jar {
-        appendix = 'cont-producer'
-    }
 }
 
-project('cont-consumer') {
+project('gs-yarn-rabbit-cont-consumer') {
+    apply plugin: 'spring-boot'
     eclipse.project.name = 'gs-yarn-rabbit-cont-consumer'
     dependencies {
         compile("org.springframework.boot:spring-boot-starter-amqp") {
             exclude group:'ch.qos.logback'
         }
     }
-    jar {
-        appendix = 'cont-consumer'
-    }
+}
+
+project('gs-yarn-rabbit-dist') {
+    clean.doLast {ant.delete(dir: "target")}
 }
 
 task wrapper(type: Wrapper) {
