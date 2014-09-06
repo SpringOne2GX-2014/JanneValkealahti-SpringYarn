@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        maven { url "http://repo.spring.io/libs-release" }
         maven { url "http://repo.spring.io/libs-milestone" }
     }
     dependencies {
@@ -27,14 +26,12 @@ subprojects { subproject ->
     targetCompatibility = 1.6
 
     repositories {
-        mavenLocal()
         mavenCentral()
-        maven { url "http://repo.spring.io/libs-release" }
         maven { url "http://repo.spring.io/libs-milestone" }
     }
 
     dependencies {
-        compile("org.springframework.data:spring-yarn-boot:2.1.0.BUILD-SNAPSHOT")
+        compile("org.springframework.data:spring-yarn-boot:2.1.0.M1")
     }
 
     jar {
@@ -55,7 +52,7 @@ subprojects { subproject ->
 project('client') {
     eclipse.project.name = 'gs-yarn-rabbit-client'
     dependencies {
-        compile("org.springframework.data:spring-yarn-boot-cli:2.1.0.BUILD-SNAPSHOT")
+        compile("org.springframework.data:spring-yarn-boot-cli:2.1.0.M1")
     }
     jar {
         appendix = 'client'
